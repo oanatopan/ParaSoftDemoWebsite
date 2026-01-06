@@ -1,89 +1,56 @@
 package tests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.*;
+import helpMethods.ElementsMethods;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 import java.time.Duration;
 
 public class TransferFundsTest {
     public WebDriver driver;
+    public ElementsMethods elementsMethods;
 
     @Test
     public void metodaTest() {
-        WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
-        driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-
         driver.get("https://parabank.parasoft.com/parabank/register.htm");
 
-        WebElement firstElement = driver.findElement(By.id("customer.firstName"));
-        String firstValue = "Oana";
-        firstElement.sendKeys(firstValue);
+        elementsMethods = new ElementsMethods(driver);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
-        WebElement lastElement = driver.findElement(By.id("customer.lastName"));
-        String lastValue = "Topan";
-        lastElement.sendKeys(lastValue);
+        elementsMethods.fillElement(driver.findElement(By.id("customer.firstName")), "Oana");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.lastName")), "Topan");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.street")), "Republicii");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.city")), "Baia Mare");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.state")), "Romania");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.zipCode")), "12345");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.phoneNumber")), "0700000000");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.ssn")), "111");
 
-        WebElement streetElement = driver.findElement(By.id("customer.address.street"));
-        String streetValue = "Republicii";
-        streetElement.sendKeys(streetValue);
-
-        WebElement cityElement = driver.findElement(By.id("customer.address.city"));
-        String cityValue = "Baia Mare";
-        cityElement.sendKeys(cityValue);
-
-        WebElement stateElement = driver.findElement(By.id("customer.address.state"));
-        String stateValue = "Romania";
-        stateElement.sendKeys(stateValue);
-
-        WebElement zipElement = driver.findElement(By.id("customer.address.zipCode"));
-        String zipValue = "12345";
-        zipElement.sendKeys(zipValue);
-
-        WebElement phoneElement = driver.findElement(By.id("customer.phoneNumber"));
-        String phoneValue = "0700000000";
-        phoneElement.sendKeys(phoneValue);
-
-        WebElement ssnElement = driver.findElement(By.id("customer.ssn"));
-        String ssnValue = "111";
-        ssnElement.sendKeys(ssnValue);
-
-        WebElement userElement = driver.findElement(By.id("customer.username"));
         String uniqueUser = "user_" + System.currentTimeMillis();
-        userElement.sendKeys(uniqueUser);
+        elementsMethods.fillElement(driver.findElement(By.id("customer.username")), uniqueUser);
+        elementsMethods.fillElement(driver.findElement(By.id("customer.password")), "Parola123!");
+        elementsMethods.fillElement(driver.findElement(By.id("repeatedPassword")), "Parola123!");
 
-        WebElement passElement = driver.findElement(By.id("customer.password"));
-        String passValue = "Parola123!";
-        passElement.sendKeys(passValue);
+        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Register']")));
 
-        WebElement confirmElement = driver.findElement(By.id("repeatedPassword"));
-        String confirmValue = "Parola123!";
-        confirmElement.sendKeys(confirmValue);
-
-        driver.findElement(By.xpath("//input[@value='Register']")).click();
-
-        WebElement transferLink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Transfer Funds")));
-        js.executeScript("arguments[0].click();", transferLink);
+        WebElement transferLink = driver.findElement(By.linkText("Transfer Funds"));
+        elementsMethods.clickElement(transferLink);
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//select[@id='fromAccountId']/option")));
 
-        WebElement amountField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("amount")));
-        String amountValue = "100";
-        amountField.sendKeys(amountValue);
+        elementsMethods.fillElement(driver.findElement(By.id("amount")), "100");
+        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Transfer']")));
 
-        WebElement transferButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@value='Transfer']")));
-        js.executeScript("arguments[0].click();", transferButton);
-
-        WebElement result = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("showResult")));
-        Assert.assertTrue(result.getText().contains("Transfer Complete!"));
+        WebElement result = driver.findElement(By.id("showResult"));
+        elementsMethods.waitVisible(result);
+        Assert.assertTrue(result.getText().contains("Transfer Complete!"), "Eroare: Mesajul de confirmare a transferului nu a apărut!");
 
         driver.quit();
     }

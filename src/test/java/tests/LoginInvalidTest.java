@@ -1,43 +1,33 @@
 package tests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.*;
+import helpMethods.ElementsMethods;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.time.Duration;
 
 public class LoginInvalidTest {
 
     public WebDriver driver;
+    public ElementsMethods elementsMethods;
 
     @Test
     public void metodaTest() {
-        WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
-        driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-
         driver.get("https://parabank.parasoft.com/parabank/index.htm");
 
-        WebElement usernameElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
-        String userInexistent = "utilizator_inexistent";
-        usernameElement.sendKeys(userInexistent);
+        elementsMethods = new ElementsMethods(driver);
 
-        WebElement passwordElement = driver.findElement(By.name("password"));
-        String parolaInvalida = "parola123";
-        passwordElement.sendKeys(parolaInvalida);
+        elementsMethods.fillElement(driver.findElement(By.name("username")), "utilizator_inexistent");
+        elementsMethods.fillElement(driver.findElement(By.name("password")), "parola123");
 
-        WebElement loginButton = driver.findElement(By.xpath("//input[@value='Log In']"));
-        js.executeScript("arguments[0].click();", loginButton);
+        elementsMethods.clickJS(driver.findElement(By.xpath("//input[@value='Log In']")));
 
-        WebElement errorElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("error")));
-        Assert.assertTrue(errorElement.getText().length() > 0);
+
+        String errorMsg = driver.findElement(By.xpath("//p[@class='error']")).getText();
+        Assert.assertTrue(errorMsg.length() > 0);
 
         driver.quit();
     }

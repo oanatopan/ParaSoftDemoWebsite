@@ -1,7 +1,10 @@
 package tests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.*;
+import helpMethods.ElementsMethods;
+import helpMethods.SelectMethods;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -12,84 +15,62 @@ import java.time.Duration;
 
 public class RequestLoanTest {
     public WebDriver driver;
+    public ElementsMethods elementsMethods;
+    public SelectMethods selectMethods;
 
     @Test
     public void metodaTest() {
-        WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        JavascriptExecutor js = (JavascriptExecutor) driver;
 
         driver.get("https://parabank.parasoft.com/parabank/register.htm");
 
-        WebElement firstElement = driver.findElement(By.id("customer.firstName"));
-        String firstValue = "Oana";
-        firstElement.sendKeys(firstValue);
+        elementsMethods = new ElementsMethods(driver);
+        selectMethods = new SelectMethods(driver);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
-        WebElement lastElement = driver.findElement(By.id("customer.lastName"));
-        String lastValue = "Topan";
-        lastElement.sendKeys(lastValue);
+        // 1. Înregistrare utilizator (Refactorizat cu fillElement)
+        elementsMethods.fillElement(driver.findElement(By.id("customer.firstName")), "Oana");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.lastName")), "Topan");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.street")), "Republicii");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.city")), "Baia Mare");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.state")), "Romania");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.zipCode")), "12345");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.phoneNumber")), "0700000000");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.ssn")), "999");
 
-        WebElement streetElement = driver.findElement(By.id("customer.address.street"));
-        String streetValue = "Republicii";
-        streetElement.sendKeys(streetValue);
-
-        WebElement cityElement = driver.findElement(By.id("customer.address.city"));
-        String cityValue = "Baia Mare";
-        cityElement.sendKeys(cityValue);
-
-        WebElement stateElement = driver.findElement(By.id("customer.address.state"));
-        String stateValue = "Romania";
-        stateElement.sendKeys(stateValue);
-
-        WebElement zipElement = driver.findElement(By.id("customer.address.zipCode"));
-        String zipValue = "12345";
-        zipElement.sendKeys(zipValue);
-
-        WebElement phoneElement = driver.findElement(By.id("customer.phoneNumber"));
-        String phoneValue = "0700000000";
-        phoneElement.sendKeys(phoneValue);
-
-        WebElement ssnElement = driver.findElement(By.id("customer.ssn"));
-        String ssnValue = "999";
-        ssnElement.sendKeys(ssnValue);
-
-        WebElement userElement = driver.findElement(By.id("customer.username"));
         String uniqueUser = "oana" + System.currentTimeMillis();
-        userElement.sendKeys(uniqueUser);
+        elementsMethods.fillElement(driver.findElement(By.id("customer.username")), uniqueUser);
+        elementsMethods.fillElement(driver.findElement(By.id("customer.password")), "parola");
+        elementsMethods.fillElement(driver.findElement(By.id("repeatedPassword")), "parola");
 
-        WebElement passElement = driver.findElement(By.id("customer.password"));
-        String passValue = "parola";
-        passElement.sendKeys(passValue);
+        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Register']")));
 
-        WebElement confirmElement = driver.findElement(By.id("repeatedPassword"));
-        String confirmValue = "parola";
-        confirmElement.sendKeys(confirmValue);
+        // 2. Request Loan
+        WebElement requestLoanLink = driver.findElement(By.linkText("Request Loan"));
+        elementsMethods.waitVisible(requestLoanLink);
+        elementsMethods.clickElement(requestLoanLink);
 
-        driver.findElement(By.xpath("//input[@value='Register']")).click();
+        // 3. Completare date împrumut
+        WebElement amountField = driver.findElement(By.id("amount"));
+        elementsMethods.waitVisible(amountField);
+        elementsMethods.fillElement(amountField, "100");
 
-        WebElement requestLoanLink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Request Loan")));
-        js.executeScript("arguments[0].click();", requestLoanLink);
+        elementsMethods.fillElement(driver.findElement(By.id("downPayment")), "10");
 
-        WebElement amountField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("amount")));
-        String amountValue = "100";
-        amountField.sendKeys(amountValue);
+        // SINCRONIZARE CRITICĂ: Așteptăm ca dropdown-ul 'fromAccountId' să aibă cel puțin o opțiune
+        // Dacă dăm click pe Apply înainte ca sistemul să vadă de unde vin banii, împrumutul va fi respins (Actual: "")
+        wait.until(ExpectedConditions.presenceOfNestedElementLocatedBy(By.id("fromAccountId"), By.tagName("option")));
 
-        WebElement downField = driver.findElement(By.id("downPayment"));
-        String downValue = "10";
-        downField.sendKeys(downValue);
+        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Apply Now']")));
 
-        WebElement applyButton = driver.findElement(By.xpath("//input[@value='Apply Now']"));
-        js.executeScript("arguments[0].click();", applyButton);
+        // 4. Validare Status
+        WebElement statusElement = driver.findElement(By.id("loanStatus"));
+        elementsMethods.waitVisible(statusElement);
 
-        WebElement statusElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("loanStatus")));
         String actualStatusText = statusElement.getText();
-
-        Assert.assertEquals(actualStatusText, "Approved", "Imprumutul a fost respins desi sumele au fost mici!");
-
-        System.out.println("LOG: Test reusit! Status imprumut: " + actualStatusText);
+        Assert.assertEquals(actualStatusText, "Approved", "Imprumutul a fost respins!");
 
         driver.quit();
     }

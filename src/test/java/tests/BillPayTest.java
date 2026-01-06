@@ -1,134 +1,66 @@
 package tests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.*;
+import helpMethods.ElementsMethods;
+import helpMethods.SelectMethods;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.time.Duration;
 
 public class BillPayTest {
 
     public WebDriver driver;
+    public ElementsMethods elementsMethods;
+    public SelectMethods selectMethods;
 
     @Test
     public void metodaTest() {
-
-        WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
-        driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-
         driver.get("https://parabank.parasoft.com/parabank/register.htm");
 
-        WebElement firstNameElement = driver.findElement(By.id("customer.firstName"));
-        String firstNameValue = "Oana";
-        firstNameElement.sendKeys(firstNameValue);
+        elementsMethods = new ElementsMethods(driver);
+        selectMethods = new SelectMethods(driver);
 
-        WebElement lastNameElement = driver.findElement(By.id("customer.lastName"));
-        String lastNameValue = "Topan";
-        lastNameElement.sendKeys(lastNameValue);
+        elementsMethods.fillElement(driver.findElement(By.id("customer.firstName")), "Oana");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.lastName")), "Topan");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.street")), "Republicii");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.city")), "Baia Mare");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.state")), "MM");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.address.zipCode")), "123456");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.phoneNumber")), "0744000111");
+        elementsMethods.fillElement(driver.findElement(By.id("customer.ssn")), "111");
 
-        WebElement addressElement = driver.findElement(By.id("customer.address.street"));
-        String addressValue = "Republicii";
-        addressElement.sendKeys(addressValue);
-
-        WebElement cityElement = driver.findElement(By.id("customer.address.city"));
-        String cityValue = "Baia Mare";
-        cityElement.sendKeys(cityValue);
-
-        WebElement stateElement = driver.findElement(By.id("customer.address.state"));
-        String stateValue = "MM";
-        stateElement.sendKeys(stateValue);
-
-        WebElement zipElement = driver.findElement(By.id("customer.address.zipCode"));
-        String zipValue = "123456";
-        zipElement.sendKeys(zipValue);
-
-        WebElement phoneElement = driver.findElement(By.id("customer.phoneNumber"));
-        String phoneValue = "0744000111";
-        phoneElement.sendKeys(phoneValue);
-
-        WebElement ssnElement = driver.findElement(By.id("customer.ssn"));
-        String ssnValue = "111";
-        ssnElement.sendKeys(ssnValue);
-
-        WebElement userElement = driver.findElement(By.id("customer.username"));
         String userNameValue = "oana" + System.currentTimeMillis();
-        userElement.sendKeys(userNameValue);
+        elementsMethods.fillElement(driver.findElement(By.id("customer.username")), userNameValue);
+        elementsMethods.fillElement(driver.findElement(By.id("customer.password")), "parola123");
+        elementsMethods.fillElement(driver.findElement(By.id("repeatedPassword")), "parola123");
 
-        WebElement passElement = driver.findElement(By.id("customer.password"));
-        String passValue = "parola123";
-        passElement.sendKeys(passValue);
+        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Register']")));
 
-        WebElement confirmPassElement = driver.findElement(By.id("repeatedPassword"));
-        String confirmPassValue = "parola123";
-        confirmPassElement.sendKeys(confirmPassValue);
+        elementsMethods.clickElement(driver.findElement(By.linkText("Bill Pay")));
 
-        WebElement registerBtn = driver.findElement(By.xpath("//input[@value='Register']"));
-        registerBtn.click();
+        elementsMethods.fillElement(driver.findElement(By.name("payee.name")), "Electrica SA");
+        elementsMethods.fillElement(driver.findElement(By.name("payee.address.street")), "Strada Energiei 10");
+        elementsMethods.fillElement(driver.findElement(By.name("payee.address.city")), "Baia Mare");
+        elementsMethods.fillElement(driver.findElement(By.name("payee.address.state")), "Maramures");
+        elementsMethods.fillElement(driver.findElement(By.name("payee.address.zipCode")), "430001");
+        elementsMethods.fillElement(driver.findElement(By.name("payee.phoneNumber")), "0744111222");
+        elementsMethods.fillElement(driver.findElement(By.name("payee.accountNumber")), "12345");
+        elementsMethods.fillElement(driver.findElement(By.name("verifyAccount")), "12345");
+        elementsMethods.fillElement(driver.findElement(By.name("amount")), "50");
 
-        WebElement billPayLink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Bill Pay")));
-        billPayLink.click();
+        selectMethods.selectByIndex(driver.findElement(By.name("fromAccountId")), 0);
 
-        WebElement payeeNameElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("payee.name")));
-        String payeeNameValue = "Electrica SA";
-        payeeNameElement.sendKeys(payeeNameValue);
+        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Send Payment']")));
 
-        WebElement pAddressElement = driver.findElement(By.name("payee.address.street"));
-        String pAddressValue = "Strada Energiei 10";
-        pAddressElement.sendKeys(pAddressValue);
+        WebElement resultElement = driver.findElement(By.xpath("//h1[contains(text(), 'Complete')]"));
+        elementsMethods.waitVisible(resultElement);
 
-        WebElement pCityElement = driver.findElement(By.name("payee.address.city"));
-        String pCityValue = "Baia Mare";
-        pCityElement.sendKeys(pCityValue);
-
-        WebElement pStateElement = driver.findElement(By.name("payee.address.state"));
-        String pStateValue = "Maramures";
-        pStateElement.sendKeys(pStateValue);
-
-        WebElement pZipElement = driver.findElement(By.name("payee.address.zipCode"));
-        String pZipValue = "430001";
-        pZipElement.sendKeys(pZipValue);
-
-        WebElement pPhoneElement = driver.findElement(By.name("payee.phoneNumber"));
-        String pPhoneValue = "0744111222";
-        pPhoneElement.sendKeys(pPhoneValue);
-
-        WebElement accountElement = driver.findElement(By.name("payee.accountNumber"));
-        String accountValue = "12345";
-        accountElement.sendKeys(accountValue);
-
-        WebElement verifyAccountElement = driver.findElement(By.name("verifyAccount"));
-        String verifyAccountValue = "12345";
-        verifyAccountElement.sendKeys(verifyAccountValue);
-
-        WebElement amountElement = driver.findElement(By.name("amount"));
-        String amountValue = "50";
-        amountElement.sendKeys(amountValue);
-
-        WebElement fromAccountSelect = driver.findElement(By.name("fromAccountId"));
-        Select selectAccount = new Select(fromAccountSelect);
-        selectAccount.selectByIndex(0);
-
-        WebElement sendPaymentBtn = driver.findElement(By.xpath("//input[@value='Send Payment']"));
-        sendPaymentBtn.click();
-
-        WebElement successTitleElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[contains(text(), 'Complete')]")));
-        String actualTitle = successTitleElement.getText();
-        String expectedTitle = "Bill Payment Complete";
-        Assert.assertEquals(actualTitle, expectedTitle);
-
-        WebElement resultMsgElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), '" + payeeNameValue + "')]")));
-        String actualMsg = resultMsgElement.getText();
-
-        System.out.println("LOG: Username-ul tau este: " + userNameValue);
-        Assert.assertTrue(actualMsg.contains(payeeNameValue));
+        String actualTitle = resultElement.getText();
+        Assert.assertEquals(actualTitle, "Bill Payment Complete");
 
         driver.quit();
     }
