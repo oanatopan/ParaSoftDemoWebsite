@@ -1,44 +1,25 @@
 package tests;
 
-import helpMethods.ElementsMethods;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pages.RegisterPage;
+import shareData.SharedData;
 
-public class RegisterTest {
-
-    public WebDriver driver;
-    public ElementsMethods elementsMethods;
+public class RegisterTest extends SharedData {
 
     @Test
     public void metodaTest() {
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://parabank.parasoft.com/parabank/register.htm");
+        RegisterPage registerPage = new RegisterPage(driver);
 
-        elementsMethods = new ElementsMethods(driver);
+        registerPage.goToRegister();
 
-        elementsMethods.fillElement(driver.findElement(By.id("customer.firstName")), "Oana");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.lastName")), "Topan");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.street")), "Republicii");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.city")), "Baia Mare");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.state")), "Romania");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.zipCode")), "12345");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.phoneNumber")), "0700000000");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.ssn")), "111");
+        String userUniq = "oana" + System.currentTimeMillis();
 
-        String uniqueUser = "oana" + System.currentTimeMillis();
-        elementsMethods.fillElement(driver.findElement(By.id("customer.username")), uniqueUser);
-        elementsMethods.fillElement(driver.findElement(By.id("customer.password")), "Parola123!");
-        elementsMethods.fillElement(driver.findElement(By.id("repeatedPassword")), "Parola123!");
+        registerPage.registerUserUniq("Oana", "Topan", "Republicii", "Baia Mare", "Romania", "123456", "0722000000","123-45-678",userUniq, "Parola123!");
 
-        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Register']")));
+        Assert.assertTrue(registerPage.isRegistrationSuccessful(),
+                "Registration failed for user: " + userUniq);
 
-        String successMsg = driver.findElement(By.id("rightPanel")).getText();
-        Assert.assertTrue(successMsg.contains("Your account was created successfully"));
-
-        driver.quit();
+        System.out.println("SUCCES: User " + userUniq + " was created and verified.");
     }
 }

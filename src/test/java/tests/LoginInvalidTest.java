@@ -1,34 +1,20 @@
 package tests;
 
-import helpMethods.ElementsMethods;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pages.LoginPage;
+import shareData.SharedData;
 
-public class LoginInvalidTest {
-
-    public WebDriver driver;
-    public ElementsMethods elementsMethods;
+public class LoginInvalidTest extends SharedData {
 
     @Test
     public void metodaTest() {
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://parabank.parasoft.com/parabank/index.htm");
+        LoginPage loginPage = new LoginPage(driver);
 
-        elementsMethods = new ElementsMethods(driver);
+        loginPage.loginProcess("utilizator_inexistent", "parola123");
 
-        elementsMethods.fillElement(driver.findElement(By.name("username")), "utilizator_inexistent");
-        elementsMethods.fillElement(driver.findElement(By.name("password")), "parola123");
+        Assert.assertTrue(loginPage.isErrorDisplayed(), "Mesajul de eroare NU a apărut după un login invalid!");
 
-        elementsMethods.clickJS(driver.findElement(By.xpath("//input[@value='Log In']")));
-
-
-        String errorMsg = driver.findElement(By.xpath("//p[@class='error']")).getText();
-        Assert.assertTrue(errorMsg.length() > 0);
-
-        driver.quit();
+        System.out.println("SUCCESS: Testul negativ de Login a trecut. Eroarea este vizibilă.");
     }
 }

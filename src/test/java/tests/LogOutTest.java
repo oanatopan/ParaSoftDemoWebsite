@@ -1,58 +1,29 @@
 package tests;
 
-import helpMethods.ElementsMethods;
-import helpMethods.SelectMethods;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pages.HomePage;
+import pages.RegisterPage;
+import shareData.SharedData;
 
-public class LogOutTest {
-
-    public WebDriver driver;
-    public ElementsMethods elementsMethods;
-    public SelectMethods selectMethods;
+public class LogOutTest extends SharedData {
 
     @Test
     public void metodaTest() {
-        driver = new ChromeDriver();
-        driver.manage().deleteAllCookies();
-        driver.manage().window().maximize();
+        RegisterPage registerPage = new RegisterPage(driver);
+        HomePage homePage = new HomePage(driver);
 
-        driver.get("https://parabank.parasoft.com/parabank/register.htm");
+        registerPage.goToRegister();
+        String userUniq = "user" + System.currentTimeMillis();
+        registerPage.registerUserUniq("Oana", "Topan", "Republicii", "Baia Mare", "Romania", "123456", "0722000000", "123-45-678", userUniq, "Parola123!");
 
-        elementsMethods = new ElementsMethods(driver);
-        selectMethods = new SelectMethods(driver);
+        Assert.assertTrue(registerPage.isRegistrationSuccessful(), "Registration failed!");
 
-        elementsMethods.fillElement(driver.findElement(By.id("customer.firstName")), "Oana");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.lastName")), "Topan");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.street")), "Strada Republicii");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.city")), "Baia Mare");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.state")), "MM");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.zipCode")), "43000");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.phoneNumber")), "0744111222");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.ssn")), "999");
+        Assert.assertTrue(homePage.isLogOutVisible(), "The Log Out button is not visible after registration!");
+        homePage.clickLogOut();
 
-        String userValue = "oana" + System.currentTimeMillis();
-        String passValue = "Parola123!";
+        driver.get("https://parabank.parasoft.com/parabank/index.htm");
 
-        elementsMethods.fillElement(driver.findElement(By.id("customer.username")), userValue);
-        elementsMethods.fillElement(driver.findElement(By.id("customer.password")), passValue);
-        elementsMethods.fillElement(driver.findElement(By.id("repeatedPassword")), passValue);
-
-        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Register']")));
-
-        WebElement logOutLink = driver.findElement(By.linkText("Log Out"));
-        elementsMethods.waitVisible(logOutLink);
-        elementsMethods.clickElement(logOutLink);
-
-        WebElement loginButton = driver.findElement(By.xpath("//input[@value='Log In']"));
-        elementsMethods.waitVisible(loginButton);
-
-        Assert.assertTrue(loginButton.isDisplayed(), "Eroare: Utilizatorul nu a fost delogat (butonul Log In nu e vizibil)!");
-
-        driver.quit();
+        Assert.assertTrue(homePage.isLoginVisible(), "The Login button did not appear after Logout!");
     }
 }

@@ -5,18 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TabMethods {
-    public WebDriver driver;
+    private WebDriver driver;
+    public TabMethods(WebDriver driver) { this.driver = driver; }
 
-    public TabMethods(WebDriver driver) {
-        this.driver = driver;
-    }
-
-    public void switchSpecificTab(int index) {
-        List<String> tabsList = new ArrayList<>(driver.getWindowHandles());
-        driver.switchTo().window(tabsList.get(index));
-    }
-
-    public void closeCurrentTab(){
-        driver.close();
+    public void switchToTab(int index) {
+        List<String> tabs = new ArrayList<>(driver.getWindowHandles());
+        if (index < tabs.size()) {
+            driver.switchTo().window(tabs.get(index));
+        }
     }
 }

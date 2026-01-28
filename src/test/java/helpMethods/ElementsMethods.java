@@ -1,7 +1,5 @@
 package helpMethods;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -9,25 +7,17 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class ElementsMethods {
-    public WebDriver driver;
+    private WebDriver driver;
+    private WebDriverWait wait;
 
     public ElementsMethods(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     public void waitVisible(WebElement element) {
-        new WebDriverWait(driver, Duration.ofSeconds(15)).until(ExpectedConditions.visibilityOf(element));
-    }
-
-    // Metoda noua pentru corelarea corecta cu locatarii (By)
-    public void waitVisibleBy(By locator) {
-        new WebDriverWait(driver, Duration.ofSeconds(15)).until(ExpectedConditions.visibilityOfElementLocated(locator));
-    }
-
-    public void fillElement(WebElement element, String text) {
-        waitVisible(element);
-        element.clear();
-        element.sendKeys(text);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        wait.until(ExpectedConditions.visibilityOf(element));
     }
 
     public void clickElement(WebElement element) {
@@ -35,8 +25,28 @@ public class ElementsMethods {
         element.click();
     }
 
+    public void fillElement(WebElement element, String value) {
+        wait.until(ExpectedConditions.visibilityOf(element));
+        element.sendKeys(value);
+    }
+
+    public boolean isElementDisplayed(WebElement element) {
+        try {
+            waitVisible(element);
+            return element.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String getElementText(WebElement element) {
+        waitVisible(element);
+        return element.getText();
+    }
+
     public void clickJS(WebElement element) {
         waitVisible(element);
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        org.openqa.selenium.JavascriptExecutor js = (org.openqa.selenium.JavascriptExecutor) driver;
+        js.executeScript("arguments[0].click();", element);
     }
 }

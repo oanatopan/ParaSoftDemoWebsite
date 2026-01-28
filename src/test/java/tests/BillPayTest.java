@@ -1,67 +1,29 @@
 package tests;
 
-import helpMethods.ElementsMethods;
-import helpMethods.SelectMethods;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pages.BillPayPage;
+import pages.RegisterPage;
+import shareData.SharedData;
 
-public class BillPayTest {
-
-    public WebDriver driver;
-    public ElementsMethods elementsMethods;
-    public SelectMethods selectMethods;
-
+public class BillPayTest extends SharedData {
     @Test
     public void metodaTest() {
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://parabank.parasoft.com/parabank/register.htm");
+        driver.get("https://parabank.parasoft.com/parabank/index.htm");
 
-        elementsMethods = new ElementsMethods(driver);
-        selectMethods = new SelectMethods(driver);
+        RegisterPage registerPage = new RegisterPage(driver);
+        BillPayPage billPayPage = new BillPayPage(driver);
 
-        elementsMethods.fillElement(driver.findElement(By.id("customer.firstName")), "Oana");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.lastName")), "Topan");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.street")), "Republicii");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.city")), "Baia Mare");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.state")), "MM");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.zipCode")), "123456");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.phoneNumber")), "0744000111");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.ssn")), "111");
+        registerPage.goToRegister();
+        String userUnic = "oanaBP" + System.currentTimeMillis();
 
-        String userNameValue = "oana" + System.currentTimeMillis();
-        elementsMethods.fillElement(driver.findElement(By.id("customer.username")), userNameValue);
-        elementsMethods.fillElement(driver.findElement(By.id("customer.password")), "parola123");
-        elementsMethods.fillElement(driver.findElement(By.id("repeatedPassword")), "parola123");
+        registerPage.registerUserUniq("Oana", "Topan", "Republicii", "Baia Mare", "Romania", "123456", "0722000000","123-45-678", userUnic, "Parola123!");
 
-        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Register']")));
+        billPayPage.goToBillPay();
+        billPayPage.payBill("Electrica SA", "Str. Energiei 10", "Baia Mare", "Maramures", "430001",
+                "0744111222", "12345", "12345", "50", "13579");
 
-        elementsMethods.clickElement(driver.findElement(By.linkText("Bill Pay")));
-
-        elementsMethods.fillElement(driver.findElement(By.name("payee.name")), "Electrica SA");
-        elementsMethods.fillElement(driver.findElement(By.name("payee.address.street")), "Strada Energiei 10");
-        elementsMethods.fillElement(driver.findElement(By.name("payee.address.city")), "Baia Mare");
-        elementsMethods.fillElement(driver.findElement(By.name("payee.address.state")), "Maramures");
-        elementsMethods.fillElement(driver.findElement(By.name("payee.address.zipCode")), "430001");
-        elementsMethods.fillElement(driver.findElement(By.name("payee.phoneNumber")), "0744111222");
-        elementsMethods.fillElement(driver.findElement(By.name("payee.accountNumber")), "12345");
-        elementsMethods.fillElement(driver.findElement(By.name("verifyAccount")), "12345");
-        elementsMethods.fillElement(driver.findElement(By.name("amount")), "50");
-
-        selectMethods.selectByIndex(driver.findElement(By.name("fromAccountId")), 0);
-
-        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Send Payment']")));
-
-        WebElement resultElement = driver.findElement(By.xpath("//h1[contains(text(), 'Complete')]"));
-        elementsMethods.waitVisible(resultElement);
-
-        String actualTitle = resultElement.getText();
-        Assert.assertEquals(actualTitle, "Bill Payment Complete");
-
-        driver.quit();
+        Assert.assertTrue(billPayPage.isPaymentSuccessful(), "Plata nu a fost finalizată!");
+        System.out.println("SUCCESS: The invoice has been paid for the user: " + userUnic);
     }
 }

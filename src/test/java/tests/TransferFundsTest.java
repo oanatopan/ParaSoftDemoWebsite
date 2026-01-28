@@ -1,57 +1,39 @@
 package tests;
 
-import helpMethods.ElementsMethods;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import java.time.Duration;
+import pages.RegisterPage;
+import pages.TransferFundsPage;
+import shareData.SharedData;
 
-public class TransferFundsTest {
-    public WebDriver driver;
-    public ElementsMethods elementsMethods;
+public class TransferFundsTest extends SharedData {
 
     @Test
-    public void metodaTest() {
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://parabank.parasoft.com/parabank/register.htm");
+    public void transferBaniTest() {
+        RegisterPage registerPage = new RegisterPage(driver);
+        TransferFundsPage transferPage = new TransferFundsPage(driver);
 
-        elementsMethods = new ElementsMethods(driver);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        registerPage.goToRegister();
 
-        elementsMethods.fillElement(driver.findElement(By.id("customer.firstName")), "Oana");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.lastName")), "Topan");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.street")), "Republicii");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.city")), "Baia Mare");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.state")), "Romania");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.address.zipCode")), "12345");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.phoneNumber")), "0700000000");
-        elementsMethods.fillElement(driver.findElement(By.id("customer.ssn")), "111");
+        String uniqueUser = "user" + System.currentTimeMillis();
+        registerPage.registerUserUniq("Oana", "Topan", "Republicii", "Baia Mare", "Romania", "123456", "0722000000","123-45-678",uniqueUser, "Parola123!");
 
-        String uniqueUser = "user_" + System.currentTimeMillis();
-        elementsMethods.fillElement(driver.findElement(By.id("customer.username")), uniqueUser);
-        elementsMethods.fillElement(driver.findElement(By.id("customer.password")), "Parola123!");
-        elementsMethods.fillElement(driver.findElement(By.id("repeatedPassword")), "Parola123!");
+        Assert.assertTrue(registerPage.isRegistrationSuccessful(), "Registration failed!");
 
-        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Register']")));
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        WebElement transferLink = driver.findElement(By.linkText("Transfer Funds"));
-        elementsMethods.clickElement(transferLink);
+        transferPage.goToTransferFunds();
 
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//select[@id='fromAccountId']/option")));
+        transferPage.makeTransfer("50");
 
-        elementsMethods.fillElement(driver.findElement(By.id("amount")), "100");
-        elementsMethods.clickElement(driver.findElement(By.xpath("//input[@value='Transfer']")));
+        String actualMessage = transferPage.getResultMessage();
+        Assert.assertTrue(actualMessage.contains("Transfer Complete"),
+                "The success message did not appear! Current message: " + actualMessage);
 
-        WebElement result = driver.findElement(By.id("showResult"));
-        elementsMethods.waitVisible(result);
-        Assert.assertTrue(result.getText().contains("Transfer Complete!"), "Eroare: Mesajul de confirmare a transferului nu a apărut!");
-
-        driver.quit();
+        System.out.println("LOG: Transfer successfully completed for user: " + uniqueUser);
     }
 }
