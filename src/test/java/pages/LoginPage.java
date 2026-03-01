@@ -5,9 +5,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class LoginPage extends BasePage {
+
     public LoginPage(WebDriver driver) {
         super(driver);
     }
+
     @FindBy(name = "username")
     private WebElement userField;
 
@@ -27,12 +29,6 @@ public class LoginPage extends BasePage {
     }
 
     public boolean isErrorDisplayed() {
-        try {
-            elementsMethods.waitVisible(errorMsg);
-            return errorMsg.isDisplayed();
-        } catch (Exception e) {
-            System.out.println("DEBUG: Mesajul de eroare nu a apărut în timpul setat.");
-            return false;
-        }
+        return elementsMethods.isElementDisplayed(errorMsg);
     }
 }

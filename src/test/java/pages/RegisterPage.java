@@ -1,14 +1,10 @@
 package pages;
 
-import helpMethods.ElementsMethods;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 
 public class RegisterPage extends BasePage {
-    private ElementsMethods elementsMethods;
-
 
     @FindBy(linkText = "Register") private WebElement registerLink;
     @FindBy(id = "customer.firstName") private WebElement firstNameField;
@@ -25,20 +21,17 @@ public class RegisterPage extends BasePage {
     @FindBy(xpath = "//input[@value='Register']") private WebElement registerBtn;
     @FindBy(id = "rightPanel") private WebElement rightPanel;
 
-
     public RegisterPage(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(driver, this);
-        this.elementsMethods = new ElementsMethods(driver);
-
-    }
-    public void goToRegister() { elementsMethods.clickElement(registerLink); }
-    public void testFrame() {
-        frameMethods.switchToFrame(rightPanel);
-        frameMethods.switchToDefaultContent();
     }
 
-    public void registerUserUniq(String fName, String lName, String street, String city, String state, String zip, String phone, String ssn, String user, String pass) {
+    public void goToRegister() {
+        elementsMethods.clickElement(registerLink);
+    }
+
+    // ✅ singura metodă de register pe care o chemi din teste
+    public void registerUserUniq(String fName, String lName, String street, String city, String state,
+                                 String zip, String phone, String ssn, String user, String pass) {
         elementsMethods.fillElement(firstNameField, fName);
         elementsMethods.fillElement(lastNameField, lName);
         elementsMethods.fillElement(streetField, street);
@@ -54,8 +47,7 @@ public class RegisterPage extends BasePage {
     }
 
     public boolean isRegistrationSuccessful() {
-        String textDeConfirmare = elementsMethods.getElementText(rightPanel);
-        System.out.println("DEBUG: Textul găsit pe pagină după înregistrare: " + textDeConfirmare);
-        return textDeConfirmare.contains("Your account was created successfully");
+        return elementsMethods.getElementText(rightPanel)
+                .contains("Your account was created successfully");
     }
 }

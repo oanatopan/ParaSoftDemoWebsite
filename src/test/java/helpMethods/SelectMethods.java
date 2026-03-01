@@ -1,4 +1,3 @@
-// SelectMethods.java
 package helpMethods;
 
 import org.openqa.selenium.WebDriver;
@@ -17,14 +16,16 @@ public class SelectMethods {
         select.selectByVisibleText(text);
     }
 
-
+    // alias folosit în proiect
     public void selectByText(WebElement element, String text) {
         selectByVisibleText(element, text);
     }
 
+    // alias (opțional) – dacă ai apeluri deja în cod
     public void selectDropdownElement(WebElement element, String text) {
         selectByVisibleText(element, text);
     }
+
     public void selectByIndex(WebElement element, int index) {
         Select select = new Select(element);
         select.selectByIndex(index);

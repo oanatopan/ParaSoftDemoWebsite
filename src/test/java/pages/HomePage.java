@@ -16,9 +16,10 @@ public class HomePage extends BasePage {
     @FindBy(xpath = "//input[@value='Log In']")
     private WebElement loginBtn;
 
-    public void clickLogOut() {
+    public HomePage clickLogOut() {
         elementsMethods.waitVisible(logOutLink);
         elementsMethods.clickElement(logOutLink);
+        return this;
     }
 
     public boolean isLoginVisible() {

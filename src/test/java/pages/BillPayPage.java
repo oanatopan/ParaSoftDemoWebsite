@@ -23,12 +23,15 @@ public class BillPayPage extends BasePage {
     @FindBy(xpath = "//input[@value='Send Payment']") private WebElement sendPaymentBtn;
     @FindBy(id = "billpayResult") private WebElement billpayResult;
 
-    public void goToBillPay() {
+    public BillPayPage goToBillPay() {
         elementsMethods.clickElement(billPayLink);
+        return this;
     }
 
-    public void payBill(String name, String address, String city, String state, String zip,
-                        String phone, String acc, String vAcc, String amount, String fromAcc) {
+    // ✅ selectăm primul cont disponibil, ca în Varianta 1 (index 0)
+    public BillPayPage payBill(String name, String address, String city, String state, String zip,
+                               String phone, String acc, String vAcc, String amount) {
+
         elementsMethods.fillElement(payeeNameField, name);
         elementsMethods.fillElement(addressField, address);
         elementsMethods.fillElement(cityField, city);
@@ -38,8 +41,12 @@ public class BillPayPage extends BasePage {
         elementsMethods.fillElement(accountField, acc);
         elementsMethods.fillElement(verifyAccountField, vAcc);
         elementsMethods.fillElement(amountField, amount);
+
         selectMethods.selectByIndex(fromAccountDropdown, 0);
+
         elementsMethods.clickElement(sendPaymentBtn);
+        elementsMethods.waitVisible(billpayResult);
+        return this;
     }
 
     public boolean isPaymentSuccessful() {

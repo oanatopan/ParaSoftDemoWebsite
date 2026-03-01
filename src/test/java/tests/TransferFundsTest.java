@@ -2,38 +2,41 @@ package tests;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import pages.RegisterPage;
-import pages.TransferFundsPage;
 import shareData.SharedData;
 
 public class TransferFundsTest extends SharedData {
 
     @Test
-    public void transferBaniTest() {
-        RegisterPage registerPage = new RegisterPage(driver);
-        TransferFundsPage transferPage = new TransferFundsPage(driver);
+    public void automationTest() {
 
         registerPage.goToRegister();
 
-        String uniqueUser = "user" + System.currentTimeMillis();
-        registerPage.registerUserUniq("Oana", "Topan", "Republicii", "Baia Mare", "Romania", "123456", "0722000000","123-45-678",uniqueUser, "Parola123!");
+        String userUnic = "transfer" + System.currentTimeMillis();
 
-        Assert.assertTrue(registerPage.isRegistrationSuccessful(), "Registration failed!");
+        registerPage.registerUserUniq(
+                "Oana",
+                "Topan",
+                "Republicii",
+                "Baia Mare",
+                "Romania",
+                "123456",
+                "0722000000",
+                "123-45-678",
+                userUnic,
+                "Parola123!"
+        );
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Assert.assertTrue(
+                registerPage.isRegistrationSuccessful(),
+                "Registration failed!"
+        );
 
-        transferPage.goToTransferFunds();
+        transferFundsPage.goToTransferFunds();
+        transferFundsPage.makeTransfer("50");
 
-        transferPage.makeTransfer("50");
-
-        String actualMessage = transferPage.getResultMessage();
-        Assert.assertTrue(actualMessage.contains("Transfer Complete"),
-                "The success message did not appear! Current message: " + actualMessage);
-
-        System.out.println("LOG: Transfer successfully completed for user: " + uniqueUser);
+        Assert.assertTrue(
+                transferFundsPage.isTransferSuccessful(),
+                "Transfer was not successful!"
+        );
     }
 }

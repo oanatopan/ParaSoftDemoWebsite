@@ -5,7 +5,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class FindTransactionsPage extends BasePage {
-    public FindTransactionsPage(WebDriver driver) { super(driver); }
+    public FindTransactionsPage(WebDriver driver) {
+        super(driver);
+    }
 
     @FindBy(linkText = "Find Transactions") private WebElement findTransactionsLink;
     @FindBy(id = "criteria.amount") private WebElement amountField;

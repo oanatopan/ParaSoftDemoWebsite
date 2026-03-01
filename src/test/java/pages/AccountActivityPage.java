@@ -25,9 +25,21 @@ public class AccountActivityPage extends BasePage {
     @FindBy(id = "transactionTable")
     private WebElement transactionTable;
 
+    /**
+     * Asigură că pagina Account Activity este încărcată
+     * (echivalentul logic din Varianta 1 unde așteptai titlul)
+     */
+    public void waitForPageToLoad() {
+        elementsMethods.waitVisible(pageTitle);
+    }
+
+    /**
+     * Filtrează tranzacțiile după lună și tip
+     */
     public void filterTransactions(String month, String type) {
-        selectMethods.selectByVisibleText(monthDropdown, month);
-        selectMethods.selectByVisibleText(typeDropdown, type);
+        waitForPageToLoad();
+        selectMethods.selectByText(monthDropdown, month);
+        selectMethods.selectByText(typeDropdown, type);
         elementsMethods.clickElement(goBtn);
     }
 
@@ -39,5 +51,7 @@ public class AccountActivityPage extends BasePage {
         return elementsMethods.getElementText(pageTitle);
     }
 
-
+    public boolean isTransactionTableDisplayed() {
+        return elementsMethods.isElementDisplayed(transactionTable);
+    }
 }

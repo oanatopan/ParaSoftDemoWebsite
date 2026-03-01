@@ -1,16 +1,16 @@
 package pages;
 
-import helpMethods.ElementsMethods;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 
 public class AccountsOverviewPage extends BasePage {
-    private ElementsMethods elementsMethods;
 
     @FindBy(linkText = "Accounts Overview")
     private WebElement accountsOverviewLink;
+
+    @FindBy(className = "title")
+    private WebElement pageTitle;
 
     @FindBy(id = "accountTable")
     private WebElement accountTable;
@@ -18,30 +18,31 @@ public class AccountsOverviewPage extends BasePage {
     @FindBy(xpath = "//table[@id='accountTable']/tbody/tr[1]/td[1]/a")
     private WebElement firstAccountLink;
 
-    @FindBy(className = "title")
-    private WebElement pageTitle;
-
     public AccountsOverviewPage(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(driver, this);
-        this.elementsMethods = new ElementsMethods(driver);
     }
 
     public void goToAccountsOverview() {
+        // În Varianta 1 făceai elementToBeClickable -> click.
+        // Aici ne bazăm pe clickElement + waitVisible din ElementsMethods.
         elementsMethods.clickElement(accountsOverviewLink);
+
+        // Asigură că pagina e încărcată (title + tabel)
+        waitForPageToLoad();
     }
 
-    public void refreshUntilTableVisible() {
-        for (int i = 0; i < 3; i++) {
-            if (!elementsMethods.isElementDisplayed(accountTable)) {
-                driver.navigate().refresh();
-            } else {
-                break;
-            }
-        }
+    /**
+     * Înlocuiește refreshUntilTableVisible() cu un wait predictibil.
+     * Nu mai folosim refresh loops în Page Object.
+     */
+    public void waitForPageToLoad() {
+        elementsMethods.waitVisible(pageTitle);
+        elementsMethods.waitVisible(accountTable);
     }
 
     public void selectFirstAccount() {
+        // tabelul trebuie să fie prezent înainte să selectăm contul
+        elementsMethods.waitVisible(firstAccountLink);
         elementsMethods.clickElement(firstAccountLink);
     }
 

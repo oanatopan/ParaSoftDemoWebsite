@@ -1,14 +1,17 @@
 package helpMethods;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.time.Duration;
 
 public class ElementsMethods {
-    private WebDriver driver;
-    private WebDriverWait wait;
+
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
     public ElementsMethods(WebDriver driver) {
         this.driver = driver;
@@ -16,7 +19,6 @@ public class ElementsMethods {
     }
 
     public void waitVisible(WebElement element) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         wait.until(ExpectedConditions.visibilityOf(element));
     }
 
@@ -26,7 +28,8 @@ public class ElementsMethods {
     }
 
     public void fillElement(WebElement element, String value) {
-        wait.until(ExpectedConditions.visibilityOf(element));
+        waitVisible(element);
+        element.clear();
         element.sendKeys(value);
     }
 
@@ -46,7 +49,7 @@ public class ElementsMethods {
 
     public void clickJS(WebElement element) {
         waitVisible(element);
-        org.openqa.selenium.JavascriptExecutor js = (org.openqa.selenium.JavascriptExecutor) driver;
+        JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", element);
     }
 }
