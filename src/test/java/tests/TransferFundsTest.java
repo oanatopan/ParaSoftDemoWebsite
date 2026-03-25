@@ -1,90 +1,46 @@
 package tests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import modelObject.OpenAccountModel;
+import modelObject.RegisterModel;
+import modelObject.TransferFundsModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import shareData.SharedData;
 
-import java.time.Duration;
-
-public class TransferFundsTest {
-    public WebDriver driver;
+public class TransferFundsTest extends SharedData {
 
     @Test
-    public void metodaTest() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().deleteAllCookies();
-        driver.manage().window().maximize();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        JavascriptExecutor js = (JavascriptExecutor) driver;
+    public void automationTest() {
+        RegisterModel registerData = new RegisterModel("RegisterData.json");
+        TransferFundsModel transferData = new TransferFundsModel("TransferFunds.json");
+        OpenAccountModel openData = new OpenAccountModel("OpenAccountData.json");
 
-        driver.get("https://parabank.parasoft.com/parabank/register.htm");
+        registerPage.goToRegister();
+        String userUniq = "oana" + System.currentTimeMillis();
+        registerPage.registerUserUniq(registerData, userUniq);
 
-        WebElement firstElement = driver.findElement(By.id("customer.firstName"));
-        String firstValue = "Oana";
-        firstElement.sendKeys(firstValue);
+        Assert.assertTrue(registerPage.isRegistrationSuccessful(), "Registration failed in TransferFundsTest!");
+        Assert.assertTrue(homePage.isLogOutVisible(), "User not logged in after registration in TransferFundsTest!");
 
-        WebElement lastElement = driver.findElement(By.id("customer.lastName"));
-        String lastValue = "Topan";
-        lastElement.sendKeys(lastValue);
+        homePage.clickLogOut();
+        Assert.assertTrue(homePage.isLoginVisible(), "Login button not visible after logout in TransferFundsTest!");
 
-        WebElement streetElement = driver.findElement(By.id("customer.address.street"));
-        String streetValue = "Republicii";
-        streetElement.sendKeys(streetValue);
+        loginPage.loginProcess(userUniq, registerData.getPassword());
+        Assert.assertTrue(homePage.isLogOutVisible(), "User not logged in in TransferFundsTest!");
 
-        WebElement cityElement = driver.findElement(By.id("customer.address.city"));
-        String cityValue = "Baia Mare";
-        cityElement.sendKeys(cityValue);
+        openAccountPage.goToOpenAccount();
+        openAccountPage.openNewAccount(openData);
 
-        WebElement stateElement = driver.findElement(By.id("customer.address.state"));
-        String stateValue = "Romania";
-        stateElement.sendKeys(stateValue);
+        Assert.assertTrue(openAccountPage.isAccountOpened(openData), "Second account was not opened before transfer!");
+        Assert.assertTrue(openAccountPage.getNewAccountIdText().length() > 0, "New account id was not generated!");
 
-        WebElement zipElement = driver.findElement(By.id("customer.address.zipCode"));
-        String zipValue = "12345";
-        zipElement.sendKeys(zipValue);
+        transferFundsPage.goToTransferFunds();
+        transferFundsPage.makeTransfer(transferData);
 
-        WebElement phoneElement = driver.findElement(By.id("customer.phoneNumber"));
-        String phoneValue = "0700000000";
-        phoneElement.sendKeys(phoneValue);
-
-        WebElement ssnElement = driver.findElement(By.id("customer.ssn"));
-        String ssnValue = "111";
-        ssnElement.sendKeys(ssnValue);
-
-        WebElement userElement = driver.findElement(By.id("customer.username"));
-        String uniqueUser = "user_" + System.currentTimeMillis();
-        userElement.sendKeys(uniqueUser);
-
-        WebElement passElement = driver.findElement(By.id("customer.password"));
-        String passValue = "Parola123!";
-        passElement.sendKeys(passValue);
-
-        WebElement confirmElement = driver.findElement(By.id("repeatedPassword"));
-        String confirmValue = "Parola123!";
-        confirmElement.sendKeys(confirmValue);
-
-        driver.findElement(By.xpath("//input[@value='Register']")).click();
-
-        WebElement transferLink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Transfer Funds")));
-        js.executeScript("arguments[0].click();", transferLink);
-
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//select[@id='fromAccountId']/option")));
-
-        WebElement amountField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("amount")));
-        String amountValue = "100";
-        amountField.sendKeys(amountValue);
-
-        WebElement transferButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@value='Transfer']")));
-        js.executeScript("arguments[0].click();", transferButton);
-
-        WebElement result = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("showResult")));
-        Assert.assertTrue(result.getText().contains("Transfer Complete!"));
-
-        driver.quit();
+        Assert.assertTrue(transferFundsPage.isTransferSuccessful(), "Transfer was not successful!");
+        Assert.assertTrue(
+                transferFundsPage.getTransferredAmountText().contains(transferData.getAmount()),
+                "Transferred amount is not correct! Actual: " + transferFundsPage.getTransferredAmountText()
+        );
     }
 }

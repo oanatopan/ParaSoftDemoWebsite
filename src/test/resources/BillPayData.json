@@ -1,0 +1,12 @@
+{
+  "payeeName": "Electrica SA",
+  "address": "Str. Energiei 10",
+  "city": "Baia Mare",
+  "state": "Maramures",
+  "zipCode": "430001",
+  "phone": "0744111222",
+  "account": "12345",
+  "verifyAccount": "12345",
+  "amount": "50",
+  "fromAccountId": "13579"
+}

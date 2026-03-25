@@ -1,118 +1,52 @@
 package tests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import modelObject.OpenAccountModel;
+import modelObject.RegisterModel;
+import modelObject.TransferFundsModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import java.time.Duration;
+import shareData.SharedData;
 
-public class FindTransactionsTest {
-
-    public WebDriver driver;
+public class FindTransactionsTest extends SharedData {
 
     @Test
-    public void metodaTest() {
+    public void automationTest() {
 
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().deleteAllCookies();
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        driver.manage().window().maximize();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        RegisterModel registerData = new RegisterModel("RegisterData.json");
+        TransferFundsModel transferData = new TransferFundsModel("TransferFunds.json");
+        OpenAccountModel openData = new OpenAccountModel("OpenAccountData.json");
 
-        driver.get("https://parabank.parasoft.com/parabank/register.htm");
+        registerPage.goToRegister();
+        String uniqueUser = "txn" + System.currentTimeMillis();
+        registerPage.registerUserUniq(registerData, uniqueUser);
 
-        WebElement firstNameElement = driver.findElement(By.id("customer.firstName"));
-        String firstNameValue = "Oana";
-        firstNameElement.sendKeys(firstNameValue);
+        Assert.assertTrue(registerPage.isRegistrationSuccessful(),
+                "Registration failed in FindTransactionsTest!");
+        Assert.assertTrue(homePage.isLogOutVisible(),
+                "User not logged in after registration in FindTransactionsTest!");
 
-        WebElement lastNameElement = driver.findElement(By.id("customer.lastName"));
-        String lastNameValue = "Topan";
-        lastNameElement.sendKeys(lastNameValue);
+        openAccountPage.goToOpenAccount();
+        openAccountPage.openNewAccount(openData);
 
-        WebElement streetElement = driver.findElement(By.id("customer.address.street"));
-        String streetValue = "Strada Republicii";
-        streetElement.sendKeys(streetValue);
+        Assert.assertTrue(openAccountPage.isAccountOpened(openData),
+                "Second account was not opened before transfer!");
+        Assert.assertTrue(openAccountPage.getNewAccountIdText().length() > 0,
+                "New account id was not generated!");
 
-        WebElement cityElement = driver.findElement(By.id("customer.address.city"));
-        String cityValue = "Baia Mare";
-        cityElement.sendKeys(cityValue);
+        transferFundsPage.goToTransferFunds();
+        transferFundsPage.makeTransfer(transferData);
 
-        WebElement stateElement = driver.findElement(By.id("customer.address.state"));
-        String stateValue = "MM";
-        stateElement.sendKeys(stateValue);
+        Assert.assertTrue(transferFundsPage.isTransferSuccessful(),
+                "Transfer step failed before transaction search!");
 
-        WebElement zipElement = driver.findElement(By.id("customer.address.zipCode"));
-        String zipValue = "430000";
-        zipElement.sendKeys(zipValue);
+        findTransactionsPage.goToFindTransactions();
 
-        WebElement phoneElement = driver.findElement(By.id("customer.phoneNumber"));
-        String phoneValue = "0744123456";
-        phoneElement.sendKeys(phoneValue);
+        Assert.assertTrue(findTransactionsPage.isFindTransactionsPageLoaded(),
+                "Find Transactions page not loaded!");
 
-        WebElement ssnElement = driver.findElement(By.id("customer.ssn"));
-        String ssnValue = "123";
-        ssnElement.sendKeys(ssnValue);
+        findTransactionsPage.filterTransactionsByAmount(transferData.getAmount());
 
-        WebElement userElement = driver.findElement(By.id("customer.username"));
-        String userUnic = "oana" + System.currentTimeMillis();
-        userElement.sendKeys(userUnic);
-
-        WebElement passwordElement = driver.findElement(By.id("customer.password"));
-        String passValue = "Parola123!";
-        passwordElement.sendKeys(passValue);
-
-        WebElement confirmPassElement = driver.findElement(By.id("repeatedPassword"));
-        String confirmPassValue = "Parola123!";
-        confirmPassElement.sendKeys(confirmPassValue);
-
-        WebElement registerButton = driver.findElement(By.xpath("//input[@value='Register']"));
-        js.executeScript("arguments[0].click();", registerButton);
-
-        WebElement accountsOverviewLink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Accounts Overview")));
-        js.executeScript("arguments[0].click();", accountsOverviewLink);
-
-        for (int i = 0; i < 3; i++) {
-            if (driver.findElements(By.id("accountTable")).isEmpty()) {
-                driver.navigate().refresh();
-                wait.until(ExpectedConditions.presenceOfElementLocated(By.id("rightPanel")));
-            } else {
-                break;
-            }
-        }
-
-        WebElement accountLink = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//table[@id='accountTable']/tbody/tr[1]/td[1]/a")));
-        js.executeScript("arguments[0].click();", accountLink);
-
-        WebElement monthSelectElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("month")));
-        String monthValue = "All";
-        Select monthDropdown = new Select(monthSelectElement);
-        monthDropdown.selectByVisibleText(monthValue);
-
-        WebElement typeSelectElement = driver.findElement(By.id("transactionType"));
-        String typeValue = "All";
-        Select typeDropdown = new Select(typeSelectElement);
-        typeDropdown.selectByVisibleText(typeValue);
-
-        WebElement goButton = driver.findElement(By.xpath("//input[@value='Go']"));
-        js.executeScript("arguments[0].click();", goButton);
-
-        WebElement activityTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[text()='Account Activity']")));
-        String actualTitle = activityTitle.getText();
-        String expectedTitle = "Account Activity";
-        Assert.assertEquals(actualTitle, expectedTitle);
-
-        boolean isTablePresent = !driver.findElements(By.id("transactionTable")).isEmpty();
-        boolean isNoTransactionsMsgPresent = !driver.findElements(By.xpath("//*[contains(text(), 'No transactions found')]")).isEmpty();
-
-        Assert.assertTrue(isTablePresent || isNoTransactionsMsgPresent, "Pagina de activitate nu s-a incarcat corect!");
-
-        System.out.println("TEST PASSED: Navigarea la activitatea contului a reusit pentru " + userUnic);
-
-        driver.quit();
+        Assert.assertTrue(findTransactionsPage.isSearchResultDisplayed(),
+                "No search result was displayed after filtering by amount!");
     }
 }

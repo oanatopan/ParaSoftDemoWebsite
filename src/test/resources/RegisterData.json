@@ -1,0 +1,12 @@
+{
+  "firstName": "Oana",
+  "lastName": "Topan",
+  "address": "Republicii",
+  "city": "Baia Mare",
+  "state": "Romania",
+  "zipCode": "123456",
+  "phone": "0722000000",
+  "ssn": "123-45-678",
+  "password": "Parola123!",
+  "firstNames": ["Oana1", "Oana2", "Oana3"]
+}

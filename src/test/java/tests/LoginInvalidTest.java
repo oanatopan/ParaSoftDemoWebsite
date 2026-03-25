@@ -1,44 +1,18 @@
 package tests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import modelObject.LoginModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import shareData.SharedData;
 
-import java.time.Duration;
-
-public class LoginInvalidTest {
-
-    public WebDriver driver;
+public class LoginInvalidTest extends SharedData {
 
     @Test
-    public void metodaTest() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().deleteAllCookies();
-        driver.manage().window().maximize();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        JavascriptExecutor js = (JavascriptExecutor) driver;
+    public void automationTest() {
+        LoginModel loginData = new LoginModel("LoginData.json");
 
-        driver.get("https://parabank.parasoft.com/parabank/index.htm");
+        loginPage.loginInvalid(loginData);
 
-        WebElement usernameElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
-        String userInexistent = "utilizator_inexistent";
-        usernameElement.sendKeys(userInexistent);
-
-        WebElement passwordElement = driver.findElement(By.name("password"));
-        String parolaInvalida = "parola123";
-        passwordElement.sendKeys(parolaInvalida);
-
-        WebElement loginButton = driver.findElement(By.xpath("//input[@value='Log In']"));
-        js.executeScript("arguments[0].click();", loginButton);
-
-        WebElement errorElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("error")));
-        Assert.assertTrue(errorElement.getText().length() > 0);
-
-        driver.quit();
+        Assert.assertTrue(loginPage.isErrorDisplayed(), "Error message not displayed for invalid login!");
     }
 }
