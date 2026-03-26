@@ -1,10 +1,10 @@
 package pages;
 
 import modelObject.RegisterModel;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import utils.LogUtility;
 
 public class RegisterPage extends BasePage {
 
@@ -59,24 +59,37 @@ public class RegisterPage extends BasePage {
 
     public void goToRegister() {
         elementsMethods.clickElement(registerLink);
+        LogUtility.infoLog("The user clicks on Register link from the top menu");
     }
 
     public void registerUserUniq(String fName, String lName, String street, String city, String state,
                                  String zip, String phone, String ssn, String user, String pass) {
 
         elementsMethods.fillElement(firstNameField, fName);
+        LogUtility.infoLog("The user fills first name field with value: " + fName);
         elementsMethods.fillElement(lastNameField, lName);
+        LogUtility.infoLog("The user fills last name field with value: " + lName);
         elementsMethods.fillElement(streetField, street);
+        LogUtility.infoLog("The user fills street address field with value: " + street);
         elementsMethods.fillElement(cityField, city);
+        LogUtility.infoLog("The user fills city field with value: " + city);
         elementsMethods.fillElement(stateField, state);
+        LogUtility.infoLog("The user fills state field with value: " + state);
         elementsMethods.fillElement(zipField, zip);
+        LogUtility.infoLog("The user fills zip code field with value: " + zip);
         elementsMethods.fillElement(phoneField, phone);
+        LogUtility.infoLog("The user fills phone number field with value: " + phone);
         elementsMethods.fillElement(ssnField, ssn);
+        LogUtility.infoLog("The user fills SSN field with value: " + ssn);
         elementsMethods.fillElement(usernameField, user);
+        LogUtility.infoLog("The user fills username field with value: " + user);
         elementsMethods.fillElement(passwordField, pass);
+        LogUtility.infoLog("The user fills password field with value: " + pass);
         elementsMethods.fillElement(confirmPasswordField, pass);
+        LogUtility.infoLog("The user fills confirm password field with value: " + pass);
 
         elementsMethods.clickElement(registerBtn);
+        LogUtility.infoLog("The user clicks on Register button to submit the form");
     }
 
     public void registerUserUniq(RegisterModel data, String uniqueUsername, String overrideFirstName) {
@@ -103,7 +116,15 @@ public class RegisterPage extends BasePage {
     }
 
     public boolean isRegistrationSuccessful() {
-        return elementsMethods.isElementDisplayed(successMessage)
-                || elementsMethods.isElementDisplayed(logOutLink);
+        boolean isSuccess = elementsMethods.isElementDisplayed(successMessage) ||
+                elementsMethods.isElementDisplayed(logOutLink);
+
+        if (isSuccess) {
+            LogUtility.infoLog("The user validates that the registration was successful");
+        } else {
+            LogUtility.errorLog("Registration failed!");
+        }
+
+        return isSuccess; // Aceasta trebuie să fie ultima linie
     }
 }

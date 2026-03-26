@@ -3,6 +3,7 @@ package pages;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import utils.LogUtility;
 
 public class AccountsOverviewPage extends BasePage {
 
@@ -24,23 +25,37 @@ public class AccountsOverviewPage extends BasePage {
 
     public void goToAccountsOverview() {
         elementsMethods.clickElement(accountsOverviewLink);
+        LogUtility.infoLog("The user clicks on the Accounts Overview link from the side menu");
         waitForPageToLoad();
     }
 
     public void waitForPageToLoad() {
         elementsMethods.waitVisible(accountsOverviewTitle);
         elementsMethods.waitVisible(accountTable);
+        LogUtility.infoLog("The user waits for the Accounts Overview table to be fully loaded");
     }
 
     public void selectFirstAccount() {
+        String accountId = firstAccountLink.getText();
         elementsMethods.clickElement(firstAccountLink);
+        LogUtility.infoLog("The user selects the first account from the list with ID: " + accountId);
     }
 
     public boolean isTitleDisplayed() {
-        return elementsMethods.isElementDisplayed(accountsOverviewTitle);
+        boolean isDisplayed = elementsMethods.isElementDisplayed(accountsOverviewTitle);
+        if (isDisplayed) {
+            LogUtility.infoLog("The user validates that the 'Accounts Overview' title is visible");
+        }
+        return isDisplayed;
     }
 
     public boolean isAccountTableDisplayed() {
-        return elementsMethods.isElementDisplayed(accountTable);
+        boolean isDisplayed = elementsMethods.isElementDisplayed(accountTable);
+        if (isDisplayed) {
+            LogUtility.infoLog("The user validates that the accounts table is displayed correctly");
+        } else {
+            LogUtility.errorLog("The accounts table was not found on the page");
+        }
+        return isDisplayed;
     }
 }

@@ -10,8 +10,8 @@ public class RequestLoanTest extends SharedData {
 
     @Test
     public void automationTest() {
-        RegisterModel registerData = new RegisterModel("RegisterData.json");
-        LoanModel loanData = new LoanModel("LoanData.json");
+        LoanModel loanData = new LoanModel("src/test/resources/LoanData.json");
+        RegisterModel registerData = new RegisterModel("src/test/resources/RegisterData.json");
 
         registerPage.goToRegister();
         String userUniq = "loan" + System.currentTimeMillis();

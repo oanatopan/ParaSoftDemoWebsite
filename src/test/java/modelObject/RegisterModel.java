@@ -1,6 +1,8 @@
 package modelObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -22,18 +24,13 @@ public class RegisterModel {
         loadFromJson(filePath);
     }
 
-    private void loadFromJson(String filePath) {
-        try (InputStream inputStream =
-                     getClass().getClassLoader().getResourceAsStream(filePath)) {
-
-            if (inputStream == null) {
-                throw new RuntimeException("File not found in resources: " + filePath);
-            }
-
-            new ObjectMapper().readerForUpdating(this).readValue(inputStream);
-
+    public void loadFromJson(String filePath) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.readerForUpdating(this)
+                    .readValue(new File(filePath));
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load RegisterModel from: " + filePath, e);
+            throw new RuntimeException("Nu s-a putut încărca JSON-ul de la calea: " + filePath, e);
         }
     }
 

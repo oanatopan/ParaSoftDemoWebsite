@@ -8,5 +8,5 @@
   "account": "12345",
   "verifyAccount": "12345",
   "amount": "50",
-  "fromAccountId": "13579"
+  "fromAccountId": ""
 }

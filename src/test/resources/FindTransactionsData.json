@@ -1,6 +1,6 @@
 {
-  "transactionType": "All",
-  "dateRange": "All",
-  "expectedTitle": "Transaction Results",
+  "transactionType": "Debit",
+  "dateRange": "January",
+  "expectedTitle": "Account Details",
   "amount": "50"
 }

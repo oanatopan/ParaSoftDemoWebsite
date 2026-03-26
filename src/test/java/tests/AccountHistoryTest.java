@@ -1,27 +1,39 @@
 package tests;
 
+import modelObject.FindTransactionsModel;
 import modelObject.RegisterModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import shareData.SharedData;
+import utils.LogUtility;
 
 public class AccountHistoryTest extends SharedData {
 
     @Test
     public void automationTest() {
-        RegisterModel registerData = new RegisterModel("RegisterData.json");
-        registerPage.goToRegister();
+        LogUtility.startTest("Account History Visibility Test");
 
+        RegisterModel registerData = new RegisterModel("src/test/resources/RegisterData.json");
+        FindTransactionsModel filterData = new FindTransactionsModel("src/test/resources/FindTransactionsData.json");
+
+        registerPage.goToRegister();
         String userUniq = "oana" + System.currentTimeMillis();
         registerPage.registerUserUniq(registerData, userUniq);
+
         Assert.assertTrue(registerPage.isRegistrationSuccessful(), "Registration failed!");
-        Assert.assertTrue(homePage.isLogOutVisible(), "User not logged in after registration!");
 
         accountsOverviewPage.goToAccountsOverview();
-        accountsOverviewPage.selectFirstAccount();
+        Assert.assertTrue(accountsOverviewPage.isAccountTableDisplayed(), "The accounts table is not displayed!");
 
+        accountsOverviewPage.selectFirstAccount();
         Assert.assertTrue(accountActivityPage.isActivityContentPresent(), "Account Activity page not displayed!");
+        Assert.assertTrue(accountActivityPage.isPageTitleCorrect(filterData), "Account Activity title is not correct!");
+
+        accountActivityPage.filterTransactions(filterData);
+
         Assert.assertTrue(accountActivityPage.isTransactionSectionDisplayed(),
-                "Neither transaction table nor no transactions message is displayed!");
+                "Neither transaction table nor the no-transactions message is displayed!");
+
+        LogUtility.finishTest("Account History Visibility Test");
     }
 }

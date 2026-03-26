@@ -8,5 +8,9 @@
   "phone": "0722000000",
   "ssn": "123-45-678",
   "password": "Parola123!",
-  "firstNames": ["Oana1", "Oana2", "Oana3"]
+  "firstNames": [
+    "oana",
+    "oana2",
+    "oana3"
+  ]
 }

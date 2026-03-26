@@ -24,16 +24,16 @@ public class SharedData {
     private WebDriver driver;
     private String testName;
 
-    protected RegisterPage registerPage;
-    protected HomePage homePage;
-    protected LoanPage loanPage;
-    protected BillPayPage billPayPage;
-    protected TransferFundsPage transferFundsPage;
-    protected AccountsOverviewPage accountsOverviewPage;
-    protected AccountActivityPage accountActivityPage;
-    protected OpenAccountPage openAccountPage;
-    protected LoginPage loginPage;
-    protected FindTransactionsPage findTransactionsPage;
+    public RegisterPage registerPage;
+    public HomePage homePage;
+    public LoanPage loanPage;
+    public BillPayPage billPayPage;
+    public TransferFundsPage transferFundsPage;
+    public AccountsOverviewPage accountsOverviewPage;
+    public AccountActivityPage accountActivityPage;
+    public OpenAccountPage openAccountPage;
+    public LoginPage loginPage;
+    public FindTransactionsPage findTransactionsPage;
 
     @BeforeMethod(alwaysRun = true)
     public void prepareEnvironment() {
@@ -49,10 +49,12 @@ public class SharedData {
         options.addArguments("--incognito");
 
         driver = new ChromeDriver(options);
+        LogUtility.infoLog("The Chrome browser has been opened successfully.");
+        driver.get("https://parabank.parasoft.com/parabank/index.htm");
+        LogUtility.infoLog("The user navigates to the following URL: https://parabank.parasoft.com/parabank/index.htm");
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.get("https://parabank.parasoft.com/parabank/index.htm");
-
+        LogUtility.infoLog("Browser maximized and implicit wait set to 10 seconds.");
         LogUtility.startTest(testName);
         LogUtility.infoLog("URL: " + driver.getCurrentUrl() + " | Title: " + driver.getTitle());
 
@@ -66,6 +68,7 @@ public class SharedData {
         openAccountPage = new OpenAccountPage(driver);
         loginPage = new LoginPage(driver);
         findTransactionsPage = new FindTransactionsPage(driver);
+
     }
 
     @AfterMethod(alwaysRun = true)

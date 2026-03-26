@@ -4,12 +4,16 @@ import modelObject.FindTransactionsModel;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import utils.LogUtility;
 
 public class AccountActivityPage extends BasePage {
 
     public AccountActivityPage(WebDriver driver) {
         super(driver);
     }
+
+    @FindBy(xpath = "//h1")
+    private WebElement pageTitle;
 
     @FindBy(id = "month")
     private WebElement monthDropdown;
@@ -34,12 +38,27 @@ public class AccountActivityPage extends BasePage {
     public void filterTransactions(String month, String type) {
         waitForPageToLoad();
         selectMethods.selectByText(monthDropdown, month);
+        LogUtility.infoLog("The user selects " + month + " value from the month drop down");
         selectMethods.selectByText(typeDropdown, type);
+        LogUtility.infoLog("The user selects " + type + " value from the transaction type drop down");
         elementsMethods.clickElement(goBtn);
+        LogUtility.infoLog("The user clicks on the Go button");
     }
 
     public void filterTransactions(FindTransactionsModel data) {
         filterTransactions(data.getDateRange(), data.getTransactionType());
+    }
+
+    public boolean isPageTitleCorrect(FindTransactionsModel data) {
+        String actualTitle = elementsMethods.getElementText(pageTitle);
+        boolean isCorrect = actualTitle.contains(data.getExpectedTitle());
+
+        if (isCorrect) {
+            LogUtility.infoLog("The user validates that the page title is correct: " + data.getExpectedTitle());
+        } else {
+            LogUtility.errorLog("The page title is incorrect. Actual title: " + actualTitle);
+        }
+        return isCorrect;
     }
 
     public boolean isActivityContentPresent() {

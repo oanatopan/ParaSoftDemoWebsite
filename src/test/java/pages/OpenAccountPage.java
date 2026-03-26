@@ -4,6 +4,7 @@ import modelObject.OpenAccountModel;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import utils.LogUtility;
 
 public class OpenAccountPage extends BasePage {
 
@@ -18,47 +19,50 @@ public class OpenAccountPage extends BasePage {
     private WebElement accountTypeDropdown;
 
     @FindBy(id = "fromAccountId")
-    private WebElement fromAccountIdDropdown;
+    private WebElement fromAccountDropdown;
 
     @FindBy(xpath = "//input[@value='Open New Account']")
     private WebElement openAccountBtn;
 
-    @FindBy(xpath = "//h1[text()='Account Opened!']")
-    private WebElement accountOpenedMessage;
+    @FindBy(xpath = "//h1[contains(text(),'Account Opened')]")
+    private WebElement successMessage;
 
     @FindBy(id = "newAccountId")
     private WebElement newAccountId;
 
-    public OpenAccountPage goToOpenAccount() {
+    public void goToOpenAccount() {
         elementsMethods.clickElement(openAccountLink);
-        elementsMethods.waitVisible(accountTypeDropdown);
-        return this;
+        LogUtility.infoLog("The user navigates to the Open New Account page.");
     }
 
-    public OpenAccountPage openNewAccount(String type) {
-        selectMethods.selectByText(accountTypeDropdown, type);
-        elementsMethods.waitVisible(fromAccountIdDropdown);
-        selectMethods.selectByIndex(fromAccountIdDropdown, 0);
+    public void openNewAccount(OpenAccountModel data) {
+
+        selectMethods.selectByText(accountTypeDropdown, data.getAccountType());
+        LogUtility.infoLog("The user selects account type: " + data.getAccountType());
+
+        selectMethods.selectByIndex(fromAccountDropdown, 0);
+        LogUtility.infoLog("The user selects the first available source account.");
+
         elementsMethods.clickElement(openAccountBtn);
-        elementsMethods.waitVisible(accountOpenedMessage);
-        elementsMethods.waitVisible(newAccountId);
-        return this;
-    }
-
-    public OpenAccountPage openNewAccount(OpenAccountModel data) {
-        return openNewAccount(data.getAccountType());
-    }
-
-    public boolean isAccountOpened() {
-        return elementsMethods.isElementDisplayed(accountOpenedMessage);
+        LogUtility.infoLog("The user clicks the Open New Account button.");
     }
 
     public boolean isAccountOpened(OpenAccountModel data) {
-        String actualText = elementsMethods.getElementText(accountOpenedMessage);
-        return actualText != null && actualText.contains(data.getSuccessMessage());
+        String message = elementsMethods.getElementText(successMessage);
+        boolean result = message.contains(data.getSuccessMessage());
+
+        if(result){
+            LogUtility.infoLog("The account was successfully opened.");
+        } else {
+            LogUtility.errorLog("Account opening confirmation message is incorrect: " + message);
+        }
+
+        return result;
     }
 
     public String getNewAccountIdText() {
-        return elementsMethods.getElementText(newAccountId);
+        String accountId = elementsMethods.getElementText(newAccountId);
+        LogUtility.infoLog("New account ID generated: " + accountId);
+        return accountId;
     }
 }

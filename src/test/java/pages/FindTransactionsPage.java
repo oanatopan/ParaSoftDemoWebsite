@@ -3,6 +3,7 @@ package pages;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import utils.LogUtility;
 
 public class FindTransactionsPage extends BasePage {
 
@@ -30,29 +31,51 @@ public class FindTransactionsPage extends BasePage {
 
     public void goToFindTransactions() {
         elementsMethods.clickElement(findTransactionsLink);
+        LogUtility.infoLog("The user clicks on the Find Transactions link from the side menu");
+
         elementsMethods.waitVisible(accountIdDropdown);
         elementsMethods.waitVisible(amountField);
+        LogUtility.infoLog("The user waits for the transactions search fields to be visible");
     }
 
     public void filterTransactionsByAmount(String amount) {
         elementsMethods.fillElement(amountField, amount);
+        LogUtility.infoLog("The user fills the search amount field with: " + amount);
+
         elementsMethods.clickElement(findByAmountBtn);
+        LogUtility.infoLog("The user clicks on the Find By Amount button");
     }
 
     public boolean isTransactionTableDisplayed() {
-        return elementsMethods.isElementDisplayed(transactionTable);
+        boolean isDisplayed = elementsMethods.isElementDisplayed(transactionTable);
+        if (isDisplayed) {
+            LogUtility.infoLog("The user validates that the transaction table is displayed");
+        }
+        return isDisplayed;
     }
 
     public boolean isNoTransactionsMessageDisplayed() {
-        return elementsMethods.isElementDisplayed(noTransactionsMessage);
+        boolean isDisplayed = elementsMethods.isElementDisplayed(noTransactionsMessage);
+        if (isDisplayed) {
+            LogUtility.infoLog("The user validates that the 'No transactions found' message is displayed");
+        }
+        return isDisplayed;
     }
 
     public boolean isSearchResultDisplayed() {
+        LogUtility.infoLog("The user checks if any search result (table or no-transactions message) is visible");
         return isTransactionTableDisplayed() || isNoTransactionsMessageDisplayed();
     }
 
     public boolean isFindTransactionsPageLoaded() {
-        return elementsMethods.isElementDisplayed(accountIdDropdown)
+        boolean isLoaded = elementsMethods.isElementDisplayed(accountIdDropdown)
                 && elementsMethods.isElementDisplayed(amountField);
+
+        if (isLoaded) {
+            LogUtility.infoLog("The user validates that the Find Transactions page loaded correctly");
+        } else {
+            LogUtility.errorLog("The Find Transactions page failed to load required search fields");
+        }
+        return isLoaded;
     }
 }
