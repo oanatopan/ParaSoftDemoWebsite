@@ -1,11 +1,14 @@
 package tests;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import modelObject.RegisterModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import shareData.SharedData;
 import utils.LogUtility;
-
+@Feature("@FEATURE - USER AUTHENTICATION")
+@Story("@STORY - USER LOGOUT FROM APPLICATION")
 public class LogOutTest extends SharedData {
 
     @Test

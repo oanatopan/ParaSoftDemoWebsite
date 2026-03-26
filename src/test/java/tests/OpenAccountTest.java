@@ -1,5 +1,7 @@
 package tests;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import modelObject.OpenAccountModel;
 import modelObject.RegisterModel;
 import org.testng.Assert;
@@ -8,7 +10,8 @@ import shareData.SharedData;
 import utils.LogUtility;
 
 public class OpenAccountTest extends SharedData {
-
+    @Feature("@FEATURE - ACCOUNT MANAGEMENT")
+    @Story("@STORY - OPEN NEW BANK ACCOUNT")
     @Test
     public void automationTest() {
         LogUtility.startTest("Open New Account Test");

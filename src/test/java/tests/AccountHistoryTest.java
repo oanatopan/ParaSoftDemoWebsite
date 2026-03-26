@@ -1,11 +1,16 @@
 package tests;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import modelObject.FindTransactionsModel;
 import modelObject.RegisterModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import shareData.SharedData;
 import utils.LogUtility;
+
+@Feature("@FEATURE - ACCOUNT ACTIVITY")
+@Story("@STORY - VIEW ACCOUNT ACTIVITY")
 
 public class AccountHistoryTest extends SharedData {
 

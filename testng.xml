@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<suite name="ParaBank Suite">
+<suite name="ParaBank UI Automation Suite">
+
+    <listeners>
+        <listener class-name="utils.TestListener"/>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
     <test name="Regression Tests">
         <classes>
             <class name="tests.RegisterTest"/>
@@ -17,4 +23,5 @@
             <class name="tests.LoginInvalidTest"/>
         </classes>
     </test>
+
 </suite>

@@ -1,5 +1,7 @@
 package tests;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import modelObject.OpenAccountModel;
 import modelObject.RegisterModel;
 import modelObject.TransferFundsModel;
@@ -7,7 +9,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import shareData.SharedData;
 import utils.LogUtility;
-
+@Feature("@FEATURE - FUND TRANSFER")
+@Story("@STORY - TRANSFER MONEY BETWEEN ACCOUNTS")
 public class TransferFundsTest extends SharedData {
 
     @Test

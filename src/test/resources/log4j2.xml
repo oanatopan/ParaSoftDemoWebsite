@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="WARN" packages="frontEnd.utils">
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level - %msg%n"/>
         </Console>
+
+        <AllureAppender name="Allure">
+            <PatternLayout pattern="%msg%n"/>
+        </AllureAppender>
     </Appenders>
 
     <Loggers>
         <Root level="info">
             <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="Allure"/>
         </Root>
     </Loggers>
 </Configuration>

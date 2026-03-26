@@ -1,11 +1,14 @@
 package tests;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import modelObject.RegisterModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import shareData.SharedData;
 import utils.LogUtility;
-
+@Feature("REGISTRATION AND AUTENTIFICATION")
+@Story("USER SHOULD BE ABLE TO CREATE A BANK ACCOUNT")
 public class RegisterTest extends SharedData {
 
     @Test

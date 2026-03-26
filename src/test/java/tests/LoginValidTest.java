@@ -1,12 +1,15 @@
 package tests;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import modelObject.LoginModel;
 import modelObject.RegisterModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import shareData.SharedData;
 import utils.LogUtility;
-
+@Feature("@FEATURE - AUTHENTICATION")
+@Story("@STORY - USER LOGIN WITH VALID CREDENTIALS")
 public class LoginValidTest extends SharedData {
 
     @Test

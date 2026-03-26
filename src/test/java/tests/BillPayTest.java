@@ -1,5 +1,7 @@
 package tests;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import modelObject.BillPayModel;
 import modelObject.RegisterModel;
 import org.testng.Assert;
@@ -7,6 +9,9 @@ import org.testng.annotations.Test;
 import shareData.SharedData;
 import utils.LogUtility;
 
+@Feature("@FEATURE - BILL PAYMENT")
+@Story("@STORY - PAY BILL FROM BANK ACCOUNT")
+// AM ȘTERS IMPORTURILE REPETATE DE AICI - Ele provocau eroarea [8,1]
 public class BillPayTest extends SharedData {
 
     @Test

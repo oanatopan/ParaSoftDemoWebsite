@@ -1,11 +1,14 @@
 package tests;
 
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import modelObject.LoanModel;
 import modelObject.RegisterModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import shareData.SharedData;
-
+@Feature("@FEATURE - LOAN MANAGEMENT")
+@Story("@STORY - CUSTOMER LOAN REQUEST")
 public class RequestLoanTest extends SharedData {
 
     @Test
