@@ -14,7 +14,7 @@ import utils.LogUtility;
 
 public class AccountHistoryTest extends SharedData {
 
-    @Test
+    @Test(groups = {"SmokeSuite"})
     public void automationTest() {
         LogUtility.startTest("Account History Visibility Test");
 
