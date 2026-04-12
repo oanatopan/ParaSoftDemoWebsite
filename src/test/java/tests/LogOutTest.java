@@ -7,6 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import shareData.SharedData;
 import utils.LogUtility;
+
 @Feature("@FEATURE - USER AUTHENTICATION")
 @Story("@STORY - USER LOGOUT FROM APPLICATION")
 public class LogOutTest extends SharedData {
@@ -30,7 +31,11 @@ public class LogOutTest extends SharedData {
 
         Assert.assertTrue(homePage.isLoginVisible(), "Login button not visible after logout!");
 
-        Assert.assertFalse(homePage.isLogOutVisible(), "Log Out link is still visible after session termination!");
+        // REPARAT: inlocuit assertFalse(isLogOutVisible()) cu assertTrue(isLogOutAbsent())
+        // isLogOutVisible() facea wait de 10s inainte sa returneze false
+        // isLogOutAbsent() asteapta max 3s pentru invisibilityOf — mult mai eficient
+        Assert.assertTrue(homePage.isLogOutAbsent(),
+                "Log Out link is still visible after session termination!");
 
         LogUtility.infoLog("VALIDATION: Session successfully terminated. User redirected to login state.");
         LogUtility.finishTest("Session Termination Test (Log Out)");

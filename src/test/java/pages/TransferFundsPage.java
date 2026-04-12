@@ -1,9 +1,11 @@
 package pages;
 
 import modelObject.TransferFundsModel;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import utils.LogUtility;
 
 public class TransferFundsPage extends BasePage {
@@ -30,15 +32,20 @@ public class TransferFundsPage extends BasePage {
     @FindBy(id = "amountResult")
     private WebElement amountResult;
 
-    @FindBy(xpath = "//h1[text()='Transfer Complete!']")
+    @FindBy(xpath = "//h1[contains(text(),'Transfer Complete!')]")
     private WebElement transferCompleteTitle;
 
     public TransferFundsPage goToTransferFunds() {
         elementsMethods.clickElement(transferLink);
         LogUtility.infoLog("The user clicks on Transfer Funds link from the side menu");
 
+        // REPARAT: wait pentru amountField SI pentru dropdown-urile async
         elementsMethods.waitVisible(amountField);
-        LogUtility.infoLog("The user waits for the transfer form to become visible");
+
+        // Dropdownurile fromAccountId si toAccountId se populeaza async
+        wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(
+                By.cssSelector("#fromAccountId option"), 0));
+        LogUtility.infoLog("The user waits for the transfer form and dropdowns to be populated.");
         return this;
     }
 
@@ -48,6 +55,10 @@ public class TransferFundsPage extends BasePage {
 
         selectMethods.selectByIndex(fromAccountDropdown, 0);
         LogUtility.infoLog("The user selects the first available account from 'From Account' drop down");
+
+        // REPARAT: wait pentru toAccountId — se populeaza dupa selectarea fromAccountId
+        wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(
+                By.cssSelector("#toAccountId option"), 1));
 
         selectMethods.selectByIndex(toAccountDropdown, 1);
         LogUtility.infoLog("The user selects the second available account from 'To Account' drop down");

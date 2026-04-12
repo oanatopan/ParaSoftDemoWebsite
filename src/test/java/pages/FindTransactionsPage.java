@@ -11,7 +11,8 @@ public class FindTransactionsPage extends BasePage {
         super(driver);
     }
 
-    @FindBy(xpath = "//a[normalize-space()='Find Transactions']")
+
+    @FindBy(linkText = "Find Transactions")
     private WebElement findTransactionsLink;
 
     @FindBy(id = "accountId")

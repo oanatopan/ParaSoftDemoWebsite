@@ -20,7 +20,8 @@ public class AccountsOverviewPage extends BasePage {
     @FindBy(id = "accountTable")
     private WebElement accountTable;
 
-    @FindBy(xpath = "//table[@id='accountTable']//a")
+    // REPARAT: wait explicit inainte de getText() — tabelul se incarca async
+    @FindBy(xpath = "//table[@id='accountTable']/tbody/tr[1]/td[1]/a")
     private WebElement firstAccountLink;
 
     public void goToAccountsOverview() {
@@ -32,6 +33,8 @@ public class AccountsOverviewPage extends BasePage {
     public void waitForPageToLoad() {
         elementsMethods.waitVisible(accountsOverviewTitle);
         elementsMethods.waitVisible(accountTable);
+        // REPARAT: asteptam si primul link din tabel — se populeaza async
+        elementsMethods.waitVisible(firstAccountLink);
         LogUtility.infoLog("The user waits for the Accounts Overview table to be fully loaded");
     }
 

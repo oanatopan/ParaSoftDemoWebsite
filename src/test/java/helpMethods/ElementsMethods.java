@@ -1,6 +1,5 @@
 package helpMethods;
 
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -10,6 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.LogUtility;
 
 public class ElementsMethods {
+
     private final WebDriver driver;
     private final WebDriverWait wait;
 
@@ -57,12 +57,6 @@ public class ElementsMethods {
             LogUtility.errorLog("Could not retrieve text from the element.");
             return "";
         }
-    }
 
-    public void click(WebElement element) {
-        wait.until(ExpectedConditions.elementToBeClickable(element));
-        LogUtility.infoLog("The user clicks on the element");
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].click();", element);
     }
 }

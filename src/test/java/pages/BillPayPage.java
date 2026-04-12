@@ -12,7 +12,7 @@ public class BillPayPage extends BasePage {
         super(driver);
     }
 
-    @FindBy(xpath = "//a[normalize-space()='Bill Pay']")
+    @FindBy(linkText = "Bill Pay")
     private WebElement billPayLink;
 
     @FindBy(name = "payee.name")

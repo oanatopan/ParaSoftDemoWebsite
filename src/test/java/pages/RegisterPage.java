@@ -125,6 +125,6 @@ public class RegisterPage extends BasePage {
             LogUtility.errorLog("Registration failed!");
         }
 
-        return isSuccess; // Aceasta trebuie să fie ultima linie
+        return isSuccess;
     }
 }

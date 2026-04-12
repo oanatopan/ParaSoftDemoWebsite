@@ -10,7 +10,7 @@ name: Nightly pipeline
 
 on:
   schedule:
-  - cron: '25 18 * * 4'
+  - cron: "0 1 * * *"
 jobs:
   build:
 

@@ -1,9 +1,14 @@
+
 package pages;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.LogUtility;
+
+import java.time.Duration;
 
 public class HomePage extends BasePage {
 
@@ -41,5 +46,19 @@ public class HomePage extends BasePage {
             LogUtility.errorLog("The Log Out link was not found; the user might not be logged in");
         }
         return isVisible;
+    }
+
+    // ADAUGAT: metoda pentru verificare negativa fara wait de 10s
+    // Folosita in LogOutTest pentru Assert.assertTrue(homePage.isLogOutAbsent())
+    public boolean isLogOutAbsent() {
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(3))
+                    .until(ExpectedConditions.invisibilityOf(logOutLink));
+            LogUtility.infoLog("The user validates that the Log Out link is absent (session terminated)");
+            return true;
+        } catch (Exception e) {
+            LogUtility.errorLog("The Log Out link is still visible after logout");
+            return false;
+        }
     }
 }

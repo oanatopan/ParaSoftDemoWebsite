@@ -10,7 +10,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import pages.*;
 import utils.LogUtility;
-import java.time.Duration;
+
 
 public class SharedData {
 
@@ -42,12 +42,10 @@ public class SharedData {
 
         driver.get("https://parabank.parasoft.com/parabank/index.htm");
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
         initializePages();
     }
 
-    // METODA DE SCREENSHOT - Trebuie să fie aici, singură!
     @Attachment(value = "Screenshot la eroare", type = "image/png")
     public byte[] saveScreenshot() {
         return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);

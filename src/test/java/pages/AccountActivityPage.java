@@ -1,9 +1,11 @@
+
 package pages;
 
 import modelObject.FindTransactionsModel;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import utils.LogUtility;
 
 public class AccountActivityPage extends BasePage {
@@ -12,7 +14,7 @@ public class AccountActivityPage extends BasePage {
         super(driver);
     }
 
-    @FindBy(xpath = "//h1")
+    @FindBy(xpath = "//div[@id='rightPanel']//h1")
     private WebElement pageTitle;
 
     @FindBy(id = "month")
@@ -27,7 +29,7 @@ public class AccountActivityPage extends BasePage {
     @FindBy(id = "transactionTable")
     private WebElement transactionTable;
 
-    @FindBy(xpath = "//*[contains(text(),'No transactions found')]")
+    @FindBy(id = "noTransactions")
     private WebElement noTransactionsMessage;
 
     public void waitForPageToLoad() {
@@ -43,6 +45,14 @@ public class AccountActivityPage extends BasePage {
         LogUtility.infoLog("The user selects " + type + " value from the transaction type drop down");
         elementsMethods.clickElement(goBtn);
         LogUtility.infoLog("The user clicks on the Go button");
+
+        // ADAUGAT: wait dupa click Go - pagina se reincarca async (Angular)
+        // Asteptam ca fie tabelul, fie mesajul "no transactions" sa devina vizibil
+        wait.until(ExpectedConditions.or(
+                ExpectedConditions.visibilityOf(transactionTable),
+                ExpectedConditions.visibilityOf(noTransactionsMessage)
+        ));
+        LogUtility.infoLog("The user waits for the transaction results to load after applying filter");
     }
 
     public void filterTransactions(FindTransactionsModel data) {
@@ -52,7 +62,6 @@ public class AccountActivityPage extends BasePage {
     public boolean isPageTitleCorrect(FindTransactionsModel data) {
         String actualTitle = elementsMethods.getElementText(pageTitle);
         boolean isCorrect = actualTitle.contains(data.getExpectedTitle());
-
         if (isCorrect) {
             LogUtility.infoLog("The user validates that the page title is correct: " + data.getExpectedTitle());
         } else {
